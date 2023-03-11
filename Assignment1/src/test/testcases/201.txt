@@ -1,1 +1,0 @@
-delta, alpha: integer = 3,6;

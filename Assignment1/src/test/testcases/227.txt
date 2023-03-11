@@ -1,3 +1,0 @@
-quux: function void(z: integer , w: float ) {
-                    print("z = ", z, " w = ", w);
-                }

@@ -1,3 +1,0 @@
-baz: function boolean () {
-                    return true;
-                }

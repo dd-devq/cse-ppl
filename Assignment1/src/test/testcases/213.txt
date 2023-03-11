@@ -1,8 +1,0 @@
-main: function void() {
-                    if (5 < 3) {
-                        return;
-                    }
-                    else {
-                        print("5 is not less than 3");
-                    }
-                }

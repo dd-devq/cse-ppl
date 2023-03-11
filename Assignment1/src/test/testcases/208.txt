@@ -1,3 +1,0 @@
-main: function integer(n: false, s: string) {
-            return s[n];
-        }

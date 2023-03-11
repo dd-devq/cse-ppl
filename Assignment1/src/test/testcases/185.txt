@@ -1,2 +1,0 @@
-a: int = 5; // This is a comment
-b: bool = true;

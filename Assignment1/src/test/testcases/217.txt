@@ -1,3 +1,0 @@
-func: function boolean(a: boolean, b: boolean, c: boolean) {
-            return (a && b) || c;
-        }

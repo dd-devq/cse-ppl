@@ -1,1 +1,0 @@
-l,:,string,[,],=,[,apple,,,banana,,,orange,],;,<EOF>
