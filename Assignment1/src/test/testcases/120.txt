@@ -1,0 +1,1 @@
+Emperor /*Comment*/ 40_000

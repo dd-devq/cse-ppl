@@ -1,0 +1,5 @@
+garply: function integer(x: integer, y: integer) {
+                    a: int = x + y;
+                    b: float = x / y;
+                    return a + b;
+                }

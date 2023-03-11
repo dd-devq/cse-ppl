@@ -1,0 +1,1 @@
+Emperor,40000,<EOF>

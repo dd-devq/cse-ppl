@@ -1,0 +1,1 @@
+a,:,int,=,5,;,b,:,bool,=,true,;,c,:,string,=,Hello,;,<EOF>

@@ -1,0 +1,3 @@
+bar: function void(x: integer, y: float) {
+                    print("x = ", x, " y = ", y);
+                }

@@ -1,0 +1,1 @@
+a,:,string,=,Hello world!,;,b,:,string,=,Single quote,;,<EOF>

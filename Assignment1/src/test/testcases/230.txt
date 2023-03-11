@@ -1,0 +1,8 @@
+waldo: function boolean(x: integer, y: integer) {
+                    if ( x < y ) {
+                        return x - y;                    
+                    }
+                    else {
+                        return x + y;                    
+                    }
+                }

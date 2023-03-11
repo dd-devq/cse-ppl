@@ -1,0 +1,3 @@
+qux: function string(x: integer, y: float) {
+            return "x = " + str(x) + ", y = " + str(y);
+        }
