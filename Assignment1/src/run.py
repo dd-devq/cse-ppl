@@ -6,7 +6,8 @@ from antlr4 import *
 
 for path in ['./test/', './main/mt22/parser/']:
     sys.path.append(path)
-ANTLR_JAR = os.environ.get('ANTLR_JAR')
+# ANTLR_JAR = os.environ.get('ANTLR_JAR')
+ANTLR_JAR = 'C:/Users/flow/Dev/cse-ppl/Enviroment/antlr-4.9.2-complete.jar'
 TARGET_DIR = '../target'
 GENERATE_DIR = 'main/mt22/parser'
 
@@ -65,5 +66,4 @@ def printUsage():
 
 
 if __name__ == "__main__":
-    print(ANTLR_JAR)
     main(sys.argv[1:])
