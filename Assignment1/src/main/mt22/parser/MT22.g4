@@ -12,49 +12,51 @@ options {
 	language = Python3;
 }
 
-program: decls EOF;
+program: decl+ EOF;
 
-decls: decl decls |;
 decl: vardecl | funcdecl;
 
-vardecl: (noassigning | multipleassigning) SEMI;
-noassigning: ID COLON primitivetype;
-multipleassigning: ID multipleassigning1 expr;
-multipleassigning1: (COMA ID) multipleassigning1 (expr COMA)
+vardecl: (noassign | multipleassign) SEMI;
+noassign: idlst COLON primitivetype;
+multipleassign: ID extassign expr;
+extassign: (COMMA ID) extassign (expr COMMA)
 	| COLON primitivetype ASSIGN;
-funcdecl: ID COLON FUNCTION functiontype LB paramlists RB body;
-paramlists: param paramlist |;
-paramlist: COMA param paramlist |;
-param: OUT? INHERIT? ID COLON primitivetype;
+
+
+funcdecl: ID COLON FUNCTION functype LB paramlist RB funcinherit? body;
+funcinherit: INHERIT ID;
+paramlist: param (COMMA param)* | ;
+param: INHERIT? OUT? ID COLON primitivetype;
 body: LCB stmt* RCB;
+
 stmt:
-	ifstmt
+	assignstmt
 	| vardecl
+	| forstmt
+	| ifstmt
 	| returnstmt
 	| callstmt
 	| breakstmt
 	| continuestmt
-	| assignstmt
 	| whilestmt
 	| dowhilestmt
-	| forstmt
 	| blockstmt;
 
-assignstmt: (arrayType | ID) ASSIGN expr SEMI;
+assignstmt: (expr7 | ID) ASSIGN expr SEMI;
 
 breakstmt: BREAK SEMI;
 continuestmt: CONTINUE SEMI;
-ifstmt: IF LB expr RB stmt* (ELSE stmt)?;
-returnstmt: RETURN (expr |) SEMI;
-callstmt: ID LB exprlst RB SEMI;
+ifstmt: IF LB expr RB stmt* (ELSE stmt*)?;
+returnstmt: RETURN expr? SEMI;
+callstmt: ID LB exprlst? RB SEMI;
 forstmt:
-	FOR LB (ID ASSIGN expr) COMA expr COMA expr RB LCB stmt* RCB;
-idlst: ID (COMA ID)*;
+	FOR LB (ID ASSIGN expr) COMMA expr COMMA expr RB stmt* ;
+idlst: ID (COMMA ID)*;
 blockstmt: LCB stmt* RCB;
-dowhilestmt: DO LCB stmt* RCB WHILE LB expr RB;
-whilestmt: WHILE LB expr RB LCB stmt* RCB;
+dowhilestmt: DO blockstmt WHILE LB expr RB SEMI;
+whilestmt: WHILE LB expr RB stmt* ;
 
-functiontype: primitivetype;
+functype: primitivetype;
 
 primitivetype:
 	INTEGER
@@ -65,7 +67,7 @@ primitivetype:
 	| AUTO
 	| arrayType;
 
-exprlst: expr (COMA expr)*;
+exprlst: expr (COMMA expr)*;
 
 expr: expr1 (strconcate expr1)*;
 expr1: expr2 (relational expr2)?;
@@ -74,8 +76,8 @@ expr3: expr4 (adding expr4)*;
 expr4: expr5 (multiplying expr5)*;
 expr5: unarylogical? expr6;
 expr6: sign? expr7;
-expr7: expr8 | ID LSB expr RSB;
-expr8: operands | ID? LB expr RB;
+expr7: expr7 LSB exprlst RSB | expr8;
+expr8: operands | LB expr RB;
 
 adding: SUB | ADD;
 multiplying: DIV | MUL | MOD;
@@ -84,24 +86,32 @@ strconcate: CONCATE;
 unarylogical: NOT;
 binarylogical: AND | OR;
 sign: SUB;
-operands: INTL | FLOATL | STRINGL | BOOLL | ID | arrayl;
-arrayType: ARRAY LSB dimensions RSB OF primitivetype;
-dimensions: INTL dimension;
-dimension: COMA INTL dimension |;
+operands: INTL | FLOATL | STRINGL | BOOLL | ID | arrayL | funccall;
+funccall: ID LB exprlst* RB;
+arrayType: ARRAY LSB dimension RSB OF primitivetype;
+dimension: INTL (COMMA INTL)*;
 
 // Literal
-INTL: (NoZeroNumber Number* (UNDERSCORE Number+)* | [0]) { self.text = self.text.replace('_','') 
-			};
+INTL: (NoZeroNumber Number* (UNDERSCORE Number+)* | [0]) 
+	{
+		self.text = self.text.replace('_','') 
+	};
+
 FLOATL:
-	(Fragtional Exponent? | Number+ Exponent) { self.text = self.text.replace('_','')};
+	( Fragtional Exponent? | INTL+ Exponent )
+	{
+		self.text = self.text.replace('_','')
+	};
+
 BOOLL: TRUE | FALSE;
 STRINGL:
-	DoubleQuote StringChar* DoubleQuote {
+	DoubleQuote StringChar* DoubleQuote 
+	{
         result = str(self.text)
         self.text = result[1:-1]
     };
 
-arrayl: LCB exprlst RCB;
+arrayL: LCB exprlst RCB;
 
 // Keywords
 DO: 'do';
@@ -158,7 +168,7 @@ LCB: '{';
 RCB: '}';
 LSB: '[';
 RSB: ']';
-COMA: ',';
+COMMA: ',';
 SEMI: ';';
 DOT: '.';
 COLON: ':';
@@ -187,8 +197,9 @@ BLOCKCMT: '/*' .*? '*/' -> skip;
 
 ERROR_CHAR:
 	. {
-	raise ErrorToken(self.text)
-};
+		raise ErrorToken(self.text)
+	};
+
 UNCLOSE_STRING:
 	DoubleQuote StringChar* ([\b\t\f\n\r"\\] | EOF) {
         unclose_str = str(self.text)
@@ -198,6 +209,7 @@ UNCLOSE_STRING:
         else:
             raise UncloseString(unclose_str[1:])
     };
+
 ILLEGAL_ESCAPE:
 	DoubleQuote StringChar* InvalidSequence {
         illegal_str = str(self.text)

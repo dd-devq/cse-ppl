@@ -131,4 +131,6 @@ dmypy.json
 # test
 Assignment1/src/test/solutions/
 Assignment1/src/test/testcases/
+Assignment2/src/test/solutions/
+Assignment2/src/test/testcases/
 Assignment1/.idea/
