@@ -88,7 +88,7 @@ class ASTGenSuite(unittest.TestCase):
 ])"""
         self.assertTrue(TestAST.test(input, expect, 306))
 
-    def test2(self):
+    def test3(self):
         input = """x, y, z: float = 1.2, 3e12, 1_33.33e-23;"""
         expect = """Program([
 	VarDecl(x, FloatType, FloatLit(1.2))
@@ -96,3 +96,48 @@ class ASTGenSuite(unittest.TestCase):
 	VarDecl(z, FloatType, FloatLit(133.33e-23))
 ])"""
         self.assertTrue(TestAST.test(input, expect, 310))
+
+    def test4(self):
+        input = """x, y : integer = a, b ;"""
+        expect = """Program([
+	VarDecl(x, IntegerType, Id(a))
+	VarDecl(y, IntegerType, Id(b))
+])"""
+        self.assertTrue(TestAST.test(input, expect, 311))
+
+    def test5(self):
+        input = """x : string = "abc" ;"""
+        expect = """Program([
+	VarDecl(x, StringType, StringLit(abc))
+])"""
+        self.assertTrue(TestAST.test(input, expect, 312))
+
+    def test6(self):
+        input = """x : string = ("abc"::"cde")::"xyz" ;"""
+        expect = """Program([
+	VarDecl(x, StringType, BinExpr(::, BinExpr(::, StringLit(abc), StringLit(cde)), StringLit(xyz)))
+])"""
+        self.assertTrue(TestAST.test(input, expect, 313))
+
+    def test7(self):
+        input = """x : boolean = (a == 9) > (5 == 8) ;"""
+        expect = """Program([
+	VarDecl(x, BooleanType, BinExpr(>, BinExpr(==, Id(a), IntegerLit(9)), BinExpr(==, IntegerLit(5), IntegerLit(8))))
+])"""
+        self.assertTrue(TestAST.test(input, expect, 314))
+
+    def test8(self):
+        input = """x, y : integer = arr[0, 1, 2], arr1[4, 5, 6] ;"""
+        expect = """Program([
+	VarDecl(x, IntegerType, ArrayCell(Id(arr), [IntegerLit(0), IntegerLit(1), IntegerLit(2)]))
+	VarDecl(y, IntegerType, ArrayCell(Id(arr1), [IntegerLit(4), IntegerLit(5), IntegerLit(6)]))
+])"""
+        self.assertTrue(TestAST.test(input, expect, 315))
+
+    def test9(self):
+        input = """x, y : integer = func(1,2,3), func();"""
+        expect = """Program([
+	VarDecl(x, IntegerType, FuncCall(func, [IntegerLit(1), IntegerLit(2), IntegerLit(3)]))
+	VarDecl(y, IntegerType, FuncCall(func, []))
+])"""
+        self.assertTrue(TestAST.test(input, expect, 316))

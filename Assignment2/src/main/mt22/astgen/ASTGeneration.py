@@ -155,7 +155,16 @@ class ASTGeneration(MT22Visitor):
         elif ctx.arrayL():
             return self.visit(ctx.arrayL())
         elif ctx.funccall():
-            return
+            return self.visit(ctx.funccall())
 
     def visitArrayL(self, ctx: MT22Parser.ArrayLContext):
         return ArrayLit(self.visit(ctx.exprlst()))
+
+    def visitFunccall(self, ctx: MT22Parser.FunccallContext):
+        id = ctx.ID().getText()
+        if ctx.exprlst():
+            expr = []
+            for exprlst in ctx.exprlst():
+                expr.extend(self.visit(exprlst))
+            return FuncCall(id, expr)
+        return FuncCall(id, [])
