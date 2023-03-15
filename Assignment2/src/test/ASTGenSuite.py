@@ -24,7 +24,6 @@ class ASTGenSuite(unittest.TestCase):
         expect = str(Program([VarDecl("x", AutoType(), FloatLit(7.0))]))
         self.assertTrue(TestAST.test(input, expect, 309))
 
-
     def test_full_vardecl(self):
         input = """x, y, z: integer = 1, 2, 3;"""
         expect = """Program([
@@ -45,7 +44,6 @@ class ASTGenSuite(unittest.TestCase):
 	VarDecl(z, IntegerType, IntegerLit(3))
 ])"""
         self.assertTrue(TestAST.test(input, expect, 302))
-
 
     def test_simple_program(self):
         """Simple program"""
@@ -89,3 +87,12 @@ class ASTGenSuite(unittest.TestCase):
 	VarDecl(z, ArrayType([1], IntegerType), ArrayLit([IntegerLit(5)]))
 ])"""
         self.assertTrue(TestAST.test(input, expect, 306))
+
+    def test2(self):
+        input = """x, y, z: float = 1.2, 3e12, 1_33.33e-23;"""
+        expect = """Program([
+	VarDecl(x, FloatType, FloatLit(1.2))
+	VarDecl(y, FloatType, FloatLit(3e12))
+	VarDecl(z, FloatType, FloatLit(133.33e-23))
+])"""
+        self.assertTrue(TestAST.test(input, expect, 310))
