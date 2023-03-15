@@ -141,3 +141,13 @@ class ASTGenSuite(unittest.TestCase):
 	VarDecl(y, IntegerType, FuncCall(func, []))
 ])"""
         self.assertTrue(TestAST.test(input, expect, 316))
+
+    def test10(self):
+        input = """main: function void () {
+            while (a != 5) {}
+        }"""
+        expect = """Program([
+	VarDecl(x, IntegerType, FuncCall(func, [IntegerLit(1), IntegerLit(2), IntegerLit(3)]))
+	VarDecl(y, IntegerType, FuncCall(func, []))
+])"""
+        self.assertTrue(TestAST.test(input, expect, 317))

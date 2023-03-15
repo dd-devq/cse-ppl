@@ -52,7 +52,7 @@ callstmt: ID LB exprlst? RB SEMI;
 forstmt:
 	FOR LB (ID ASSIGN expr) COMMA expr COMMA expr RB stmt* ;
 idlst: ID (COMMA ID)*;
-blockstmt: LCB stmt* RCB;
+blockstmt: body;
 dowhilestmt: DO blockstmt WHILE LB expr RB SEMI;
 whilestmt: WHILE LB expr RB stmt* ;
 
