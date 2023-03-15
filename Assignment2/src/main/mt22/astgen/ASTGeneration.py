@@ -63,66 +63,76 @@ class ASTGeneration(MT22Visitor):
         elif ctx.AUTO():
             return AutoType()
         elif ctx.arrayType():
-            return ArrayType()
+            return self.visit(ctx.arrayType())
 
+
+    def visitArrayType(self, ctx: MT22Parser.ArrayTypeContext):
+        return ArrayType(self.visit(ctx.dimension()), self.visit(ctx.primitivetype()))
+
+
+    def visitDimension(self, ctx: MT22Parser.DimensionContext):
+        return [index.getText() for index in ctx.INTL()]
 
     def visitIdlst(self, ctx: MT22Parser.IdlstContext):
         return [id.getText() for id in ctx.ID()]
 
 
     def visitExpr(self, ctx: MT22Parser.ExprContext):
-        if ctx.getChildCount() == 3:
-            return
-        return self.visit(ctx.getChild(0))
+
+        if ctx.getChildCount() == 1:
+            return self.visit(ctx.getChild(0))
+        return BinExpr(ctx.getChild(1).getText(), self.visit(ctx.getChild(0)), self.visit(ctx.getChild(2)))
 
 
     def visitExpr1(self, ctx: MT22Parser.Expr1Context):
         if ctx.getChildCount() == 3:
-            return
+            return BinExpr(ctx.getChild(1).getText(), self.visit(ctx.getChild(0)), self.visit(ctx.getChild(2)))
         return self.visit(ctx.getChild(0))        
 
 
     def visitExpr2(self, ctx: MT22Parser.Expr2Context):
-        if ctx.getChildCount() == 3:
-            return
-        return self.visit(ctx.getChild(0))
+        if ctx.getChildCount() == 1:
+            return self.visit(ctx.getChild(0))
+        return BinExpr(ctx.getChild(1).getText(), self.visit(ctx.getChild(0)), self.visit(ctx.getChild(2)))
 
 
     def visitExpr3(self, ctx: MT22Parser.Expr3Context):
-        if ctx.getChildCount() == 3:
-            return
-        return self.visit(ctx.getChild(0))
+        if ctx.getChildCount() == 1:
+            return self.visit(ctx.getChild(0))
+        return BinExpr(ctx.getChild(1).getText(), self.visit(ctx.getChild(0)), self.visit(ctx.getChild(2)))
 
 
     def visitExpr4(self, ctx: MT22Parser.Expr4Context):
-        if ctx.getChildCount() == 3:
-            return
-        return self.visit(ctx.getChild(0))
+        if ctx.getChildCount() == 1:
+            return self.visit(ctx.getChild(0))
+        return BinExpr(ctx.getChild(1).getText(), self.visit(ctx.getChild(0)), self.visit(ctx.getChild(2)))
     
 
     def visitExpr5(self, ctx: MT22Parser.Expr5Context):
         if ctx.getChildCount() == 2:
-            return
+            return UnExpr(ctx.getChild(0).getText(), self.visit(ctx.getChild(1)))
         return self.visit(ctx.getChild(0))
         
     
     def visitExpr6(self, ctx: MT22Parser.Expr6Context):
         if ctx.getChildCount() == 2:
-            return
+            return UnExpr(ctx.getChild(0).getText(), self.visit(ctx.getChild(1)))
         return self.visit(ctx.getChild(0))
         
     
     def visitExpr7(self, ctx: MT22Parser.Expr7Context):
-        if ctx.getChildCount() == 3:
-            return
+        if ctx.getChildCount() == 4:
+            return ArrayCell(self.visit(ctx.expr7()), self.visit(ctx.exprlst()))
         return self.visit(ctx.getChild(0))
         
 
     def visitExpr8(self, ctx: MT22Parser.Expr8Context):
         if ctx.getChildCount() == 3:
-            return
+            return self.visit(ctx.expr())
         return self.visit(ctx.getChild(0))
         
+    def visitExprlst(self, ctx: MT22Parser.ExprlstContext):
+        return [self.visit(ex) for ex in ctx.expr()]
         
     def visitOperands(self, ctx: MT22Parser.OperandsContext):
         if ctx.INTL():
@@ -136,6 +146,9 @@ class ASTGeneration(MT22Visitor):
         elif ctx.ID():
             return Id(ctx.ID().getText())
         elif ctx.arrayL():
-            return ArrayLit(self.visit(ctx.exprlst()))
+            return self.visit(ctx.arrayL())
         elif ctx.funccall():
             return
+
+    def visitArrayL(self, ctx: MT22Parser.ArrayLContext):
+        return ArrayLit(self.visit(ctx.exprlst()))
