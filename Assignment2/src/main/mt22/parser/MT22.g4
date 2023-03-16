@@ -27,7 +27,7 @@ funcdecl: ID COLON FUNCTION functype LB paramlist RB funcinherit? body;
 funcinherit: INHERIT ID;
 paramlist: param (COMMA param)* | ;
 param: INHERIT? OUT? ID COLON primitivetype;
-body: LCB stmt* RCB;
+body: blockstmt;
 
 stmt:
 	assignstmt
@@ -46,13 +46,15 @@ assignstmt: (expr7 | ID) ASSIGN expr SEMI;
 
 breakstmt: BREAK SEMI;
 continuestmt: CONTINUE SEMI;
-ifstmt: IF LB expr RB stmt* (ELSE stmt*)?;
+ifstmt: IF LB expr RB truestmt (ELSE falsestmt)?;
+truestmt: stmt;
+falsestmt: stmt;
 returnstmt: RETURN expr? SEMI;
 callstmt: ID LB exprlst? RB SEMI;
 forstmt:
-	FOR LB (ID ASSIGN expr) COMMA expr COMMA expr RB stmt* ;
+	FOR LB (ID ASSIGN expr) COMMA expr COMMA expr RB stmt;
 idlst: ID (COMMA ID)*;
-blockstmt: body;
+blockstmt: LCB stmt* RCB;
 dowhilestmt: DO blockstmt WHILE LB expr RB SEMI;
 whilestmt: WHILE LB expr RB stmt* ;
 

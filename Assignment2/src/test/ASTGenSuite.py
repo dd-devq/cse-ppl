@@ -35,11 +35,11 @@ class ASTGenSuite(unittest.TestCase):
 
     def test_vardecls(self):
         input = """a, b: float; 
-        x, y, z: integer = 1_, 2, 3;"""
+        x, y, z: integer = 1_2, 2, 3;"""
         expect = """Program([
 	VarDecl(a, FloatType)
 	VarDecl(b, FloatType)
-	VarDecl(x, IntegerType, IntegerLit(1))
+	VarDecl(x, IntegerType, IntegerLit(12))
 	VarDecl(y, IntegerType, IntegerLit(2))
 	VarDecl(z, IntegerType, IntegerLit(3))
 ])"""
@@ -60,7 +60,7 @@ class ASTGenSuite(unittest.TestCase):
             printInteger(4);
         }"""
         expect = """Program([
-	FuncDecl(main, VoidType, [], None, BlockStmt([]))
+	FuncDecl(main, VoidType, [], None, BlockStmt([CallStmt(printInteger, IntegerLit(4))]))
 ])"""
         self.assertTrue(TestAST.test(input, expect, 304))
 
@@ -147,7 +147,29 @@ class ASTGenSuite(unittest.TestCase):
             while (a != 5) {}
         }"""
         expect = """Program([
-	VarDecl(x, IntegerType, FuncCall(func, [IntegerLit(1), IntegerLit(2), IntegerLit(3)]))
-	VarDecl(y, IntegerType, FuncCall(func, []))
+	FuncDecl(main, VoidType, [], None, BlockStmt([WhileStmt(BinExpr(!=, Id(a), IntegerLit(5)), BlockStmt([]))]))
 ])"""
         self.assertTrue(TestAST.test(input, expect, 317))
+
+    def test11(self):
+        input = """main: function void () {            
+            for (i = 1, i < 10, i + 1) {
+                writeInt(i);
+            }
+        }"""
+        expect = """Program([
+	FuncDecl(main, VoidType, [], None, BlockStmt([ForStmt(AssignStmt(i, IntegerLit(1)), BinExpr(<, Id(i), IntegerLit(10)), BinExpr(+, Id(i), IntegerLit(1)), BlockStmt([CallStmt(writeInt, Id(i))]))]))
+])"""
+        self.assertTrue(TestAST.test(input, expect, 318))
+
+    def test12(self):
+        input = """main: function void () {
+            do {
+                i = i + 1;
+            }
+            while (a != 5);
+        }"""
+        expect = """Program([
+	FuncDecl(main, VoidType, [], None, BlockStmt([DoWhileStmt(BinExpr(!=, Id(a), IntegerLit(5)), BlockStmt([AssignStmt(Id(i), BinExpr(+, Id(i), IntegerLit(1)))]))]))
+])"""
+        self.assertTrue(TestAST.test(input, expect, 319))

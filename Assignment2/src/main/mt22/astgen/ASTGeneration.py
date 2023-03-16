@@ -30,7 +30,7 @@ class ASTGeneration(MT22Visitor):
         return ctx.ID().getText()
 
     def visitBody(self, ctx: MT22Parser.BodyContext):
-        return BlockStmt([self.visit(stmt) for stmt in ctx.stmt()])
+        return self.visit(ctx.blockstmt())
 
     def visitParamlist(self, ctx: MT22Parser.ParamlistContext):
         return [self.visit(param) for param in ctx.param()]
@@ -198,10 +198,21 @@ class ASTGeneration(MT22Visitor):
         return AssignStmt(self.visit(ctx.getChild(0)), self.visit(ctx.expr()))
 
     def visitForstmt(self, ctx: MT22Parser.ForstmtContext):
-        return ForStmt()
+        stmt = AssignStmt(ctx.ID().getText(), self.visit(ctx.expr(0)))
+
+        return ForStmt(stmt, self.visit(ctx.expr(1)), self.visit(ctx.expr(2)), self.visit(ctx.stmt()))
 
     def visitIfstmt(self, ctx: MT22Parser.IfstmtContext):
-        return IfStmt()
+        if ctx.falsestmt():
+            return IfStmt(self.visit(ctx.expr()), self.visit(ctx.truestmt()), None)
+        else:
+            return IfStmt(self.visit(ctx.expr()), self.visit(ctx.truestmt()), self.visit(ctx.falsestmt()))
+
+    def visitTruestmt(self, ctx: MT22Parser.TruestmtContext):
+        return self.visit(ctx.stmt())
+
+    def visitFalsestmt(self, ctx: MT22Parser.FalsestmtContext):
+        return self.visit(ctx.stmt())
 
     def visitReturnstmt(self, ctx: MT22Parser.ReturnstmtContext):
         if ctx.expr():
@@ -220,11 +231,13 @@ class ASTGeneration(MT22Visitor):
         return ContinueStmt()
 
     def visitWhilestmt(self, ctx: MT22Parser.WhilestmtContext):
-        stmt = BlockStmt([self.visit(ctx.stmt())])
-        return WhileStmt(self.visit(ctx.expr()), stmt)
+        if ctx.getChildCount() == 5:
+            return WhileStmt(self.visit(ctx.expr()), self.visit(ctx.stmt(0)))
+        else:
+            return
 
     def visitDowhilestmt(self, ctx: MT22Parser.DowhilestmtContext):
         return DoWhileStmt(self.visit(ctx.expr()), self.visit(ctx.blockstmt()))
 
     def visitBlockstmt(self, ctx: MT22Parser.BlockstmtContext):
-        return self.visit(ctx.body())
+        return BlockStmt([self.visit(stmt) for stmt in ctx.stmt()])
