@@ -173,3 +173,13 @@ class ASTGenSuite(unittest.TestCase):
 	FuncDecl(main, VoidType, [], None, BlockStmt([DoWhileStmt(BinExpr(!=, Id(a), IntegerLit(5)), BlockStmt([AssignStmt(Id(i), BinExpr(+, Id(i), IntegerLit(1)))]))]))
 ])"""
         self.assertTrue(TestAST.test(input, expect, 319))
+
+    def test_indexOP(self):
+        input = """main: function void () {
+            arr: array [3] of integer = {1,3,5};
+            arr[0] = 9;
+        }"""
+        expect = """Program([
+	FuncDecl(main, VoidType, [], None, BlockStmt([VarDecl(arr, ArrayType([3], IntegerType), ArrayLit([IntegerLit(1), IntegerLit(3), IntegerLit(5)])), AssignStmt(ArrayCell(Id(arr), [IntegerLit(0)]), IntegerLit(9))]))
+])"""
+        self.assertTrue(TestAST.test(input, expect, 320))
