@@ -92,8 +92,8 @@ class ASTGenSuite(unittest.TestCase):
         input = """x, y, z: float = 1.2, 3e12, 1_33.33e-23;"""
         expect = """Program([
 	VarDecl(x, FloatType, FloatLit(1.2))
-	VarDecl(y, FloatType, FloatLit(3e12))
-	VarDecl(z, FloatType, FloatLit(133.33e-23))
+	VarDecl(y, FloatType, FloatLit(3000000000000.0))
+	VarDecl(z, FloatType, FloatLit(1.3333e-21))
 ])"""
         self.assertTrue(TestAST.test(input, expect, 310))
 

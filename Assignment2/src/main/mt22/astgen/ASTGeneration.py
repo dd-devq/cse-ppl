@@ -143,9 +143,9 @@ class ASTGeneration(MT22Visitor):
 
     def visitOperands(self, ctx: MT22Parser.OperandsContext):
         if ctx.INTL():
-            return IntegerLit(ctx.INTL().getText())
+            return IntegerLit(int(ctx.INTL().getText()))
         elif ctx.FLOATL():
-            return FloatLit(ctx.FLOATL().getText())
+            return FloatLit(float(ctx.FLOATL().getText()))
         elif ctx.STRINGL():
             return StringLit(ctx.STRINGL().getText())
         elif ctx.BOOLL():
