@@ -216,7 +216,6 @@ class ASTGenSuite(unittest.TestCase):
         self.assertTrue(TestAST.test(input, expect, 351))
 
     def test25(self):
-        """Simple program"""
         input = """a: string = "Hey boyyyyy"; main: function void() {}"""
         expect = """Program([
 	VarDecl(a, StringType, StringLit(Hey boyyyyy))
@@ -225,7 +224,6 @@ class ASTGenSuite(unittest.TestCase):
         self.assertTrue(TestAST.test(input, expect, 352))
 
     def test26(self):
-        """Simple program"""
         input = """main: function integer(n: integer, s: string) {
             return s[n];
         }"""
@@ -236,7 +234,6 @@ class ASTGenSuite(unittest.TestCase):
 
     
     def test27(self):
-        """Type test 1"""
         input = """main: function integer(n: array[3,2] of integer, s: string) {
             foo(r);
         }"""
@@ -246,7 +243,6 @@ class ASTGenSuite(unittest.TestCase):
         self.assertTrue(TestAST.test(input, expect, 354))
 
     def test28(self):
-        """Program structure 1"""
         input = """r: function integer () {}
         f: string = "For fun"; """
         expect = """Program([
@@ -256,7 +252,6 @@ class ASTGenSuite(unittest.TestCase):
         self.assertTrue(TestAST.test(input, expect, 355))
 
     def test29(self):
-        """Program structure 2"""
         input = """r: function integer () {} _r_1: function void () {} _____rr: function auto(){}"""
         expect = """Program([
 	FuncDecl(r, IntegerType, [], None, BlockStmt([]))
@@ -266,7 +261,6 @@ class ASTGenSuite(unittest.TestCase):
         self.assertTrue(TestAST.test(input, expect, 356))
 
     def test30(self):
-        """Program structure 3"""
         input = """deez: function float(inherit out nut: integer) {}"""
         expect = """Program([
 	FuncDecl(deez, FloatType, [InheritOutParam(nut, IntegerType)], None, BlockStmt([]))
@@ -274,7 +268,6 @@ class ASTGenSuite(unittest.TestCase):
         self.assertTrue(TestAST.test(input, expect, 357))
 
     def test31(self):
-        """Function params 1"""
         input = """main: function void(n: integer, arr: array[3,2] of string) {}"""
         expect = """Program([
 	FuncDecl(main, VoidType, [Param(n, IntegerType), Param(arr, ArrayType([3, 2], StringType))], None, BlockStmt([]))
@@ -282,7 +275,6 @@ class ASTGenSuite(unittest.TestCase):
         self.assertTrue(TestAST.test(input, expect, 358))
 
     def test32(self):
-        """Function params 2"""
         input = """main: function void(n: integer, out s: string, inherit f: float, tr: auto) {}"""
         expect = """Program([
 	FuncDecl(main, VoidType, [Param(n, IntegerType), OutParam(s, StringType), InheritParam(f, FloatType), Param(tr, AutoType)], None, BlockStmt([]))
@@ -290,7 +282,6 @@ class ASTGenSuite(unittest.TestCase):
         self.assertTrue(TestAST.test(input, expect, 359))
 
     def test33(self):
-        """Function params 3"""
         input = """
         x, y, z: integer = 2 + 3, -4 * 5, foo(10);
         t: float = time();
@@ -305,7 +296,6 @@ class ASTGenSuite(unittest.TestCase):
         self.assertTrue(TestAST.test(input, expect, 360))
 
     def test34(self):
-        """Variable dec1"""
         input = """main: function void() {
             x: float = 2.3e2;
         }"""
@@ -315,7 +305,6 @@ class ASTGenSuite(unittest.TestCase):
         self.assertTrue(TestAST.test(input, expect, 361))
 
     def test35(self):
-        """Variable dec2"""
         input = """main: function void() {
             x, y: integer = 2, 3;
         }"""
@@ -325,7 +314,6 @@ class ASTGenSuite(unittest.TestCase):
         self.assertTrue(TestAST.test(input, expect, 362))
 
     def test36(self):
-        """Variable dec4"""
         input = """main: function void() {
             x, y, z: string = "","","";
         }"""
@@ -335,7 +323,6 @@ class ASTGenSuite(unittest.TestCase):
         self.assertTrue(TestAST.test(input, expect, 363))
 
     def test37(self):
-        """Variable dec5"""
         input = """main: function void() {
             x, y, z: string;
         }"""
@@ -345,7 +332,6 @@ class ASTGenSuite(unittest.TestCase):
         self.assertTrue(TestAST.test(input, expect, 364))
 
     def test38(self):
-        """Variable dec6"""
         input = """main: function void() {
             x, y, z: string = toString(a), toString(b), toString(c);
         }"""
@@ -355,7 +341,6 @@ class ASTGenSuite(unittest.TestCase):
         self.assertTrue(TestAST.test(input, expect, 365))
 
     def test39(self):
-        """Variable dec7"""
         input = """main: function void() {
             x, y, z: string = int, int, int;
         }"""
@@ -365,7 +350,6 @@ class ASTGenSuite(unittest.TestCase):
         self.assertTrue(TestAST.test(input, expect, 366))
 
     def test40(self):
-        """Variable dec8"""
         input = """main: function void() {
             arr: array[3, 3, 1, 2] of integer;
         }"""
@@ -375,7 +359,6 @@ class ASTGenSuite(unittest.TestCase):
         self.assertTrue(TestAST.test(input, expect, 367))
 
     def test41(self):
-        """Variable dec9"""
         input = """main: function void() {
             arr: array[3, 3] of integer = {{2,3,4},{5,6,7},{8,9,10}};
         }"""
@@ -385,7 +368,6 @@ class ASTGenSuite(unittest.TestCase):
         self.assertTrue(TestAST.test(input, expect, 368))
 
     def test42(self):
-        """Variable dec10"""
         input = """x, y, z: array [1] of integer = {1}, {4}, {5};"""
         expect = """Program([
 	VarDecl(x, ArrayType([1], IntegerType), ArrayLit([IntegerLit(1)]))
@@ -395,7 +377,6 @@ class ASTGenSuite(unittest.TestCase):
         self.assertTrue(TestAST.test(input, expect, 323))
 
     def test43(self):
-        """Expression 1"""
         input = """main: function void() {
             a: integer = 3;
             b: integer = 4;
@@ -407,7 +388,6 @@ class ASTGenSuite(unittest.TestCase):
         self.assertTrue(TestAST.test(input, expect, 324))
 
     def test44(self):
-        """Expression 2"""
         input = """main: function void() {
             a: integer = 3;
             b: integer = 4;
@@ -419,7 +399,6 @@ class ASTGenSuite(unittest.TestCase):
         self.assertTrue(TestAST.test(input, expect, 325))
 
     def test45(self):
-        """Expression 3"""
         input = """a: float = !true % 5 / 4;"""
         expect = """Program([
 	VarDecl(a, FloatType, BinExpr(/, BinExpr(%, UnExpr(!, BooleanLit(True)), IntegerLit(5)), IntegerLit(4)))
@@ -427,7 +406,6 @@ class ASTGenSuite(unittest.TestCase):
         self.assertTrue(TestAST.test(input, expect, 326))
 
     def test46(self):
-        """Expression 4"""
         input = """a: integer = 4;
         main: function void() {
             a = str(a)::"af";
@@ -439,7 +417,6 @@ class ASTGenSuite(unittest.TestCase):
         self.assertTrue(TestAST.test(input, expect, 327))
 
     def test47(self):
-        """Expression 5"""
         input = """a: integer = 4;
         main: function void() {
             a = true || false && true;
@@ -451,7 +428,6 @@ class ASTGenSuite(unittest.TestCase):
         self.assertTrue(TestAST.test(input, expect, 328))
 
     def test48(self):
-        """Expression 6"""
         input = """a: integer = 4;
         main: function void() {
             a = true || false && false && false > 1;
@@ -464,7 +440,6 @@ class ASTGenSuite(unittest.TestCase):
         self.assertTrue(TestAST.test(input, expect, 329))
 
     def test49(self):
-        """Expression 7"""
         input = """a: integer = 4;
         main: function void() {
             a = arr[b, c, c::"string"];
@@ -476,7 +451,6 @@ class ASTGenSuite(unittest.TestCase):
         self.assertTrue(TestAST.test(input, expect, 330))
 
     def test50(self):
-        """Expression 8"""
         input = """a: integer = 4;
         main: function void() {
             a = 1 > 0;
@@ -488,7 +462,6 @@ class ASTGenSuite(unittest.TestCase):
         self.assertTrue(TestAST.test(input, expect, 331))
 
     def test51(self):
-        """Expression 9"""
         input = """
         main: function void() {
             a = foo(after(foo(after(foo(endhere)))));
@@ -499,7 +472,6 @@ class ASTGenSuite(unittest.TestCase):
         self.assertTrue(TestAST.test(input, expect, 332))
 
     def test52(self):
-        """Expression 10"""
         input = """
         main: function void() {
             a = ((a > 0) + 3) * 10;
@@ -510,7 +482,6 @@ class ASTGenSuite(unittest.TestCase):
         self.assertTrue(TestAST.test(input, expect, 333))
 
     def test53(self):
-        """Expression 11"""
         input = """
         main: function void() {
             a = a > 0 + 3 * 10;
@@ -521,7 +492,6 @@ class ASTGenSuite(unittest.TestCase):
         self.assertTrue(TestAST.test(input, expect, 334))
 
     def test54(self):
-        """Array 1"""
         input = """main: function void() {
             a: array[3] of float = {{f,g,h},{"M","J","D"},{1+3,3+4,5+7}}[3];
         }"""
@@ -531,7 +501,6 @@ class ASTGenSuite(unittest.TestCase):
         self.assertTrue(TestAST.test(input, expect, 335))
 
     def test55(self):
-        """Array 2"""
         input = """main: function void() {
             a[4] = {"DF",DSDS,__proto__};
         }"""
@@ -541,7 +510,6 @@ class ASTGenSuite(unittest.TestCase):
         self.assertTrue(TestAST.test(input, expect, 336))
 
     def test56(self):
-        """Array 3"""
         input = """main: function void() {
             a[4, 4 && 5 + 1] = {"DF",DSDS,__proto__};
         }"""
@@ -551,7 +519,6 @@ class ASTGenSuite(unittest.TestCase):
         self.assertTrue(TestAST.test(input, expect, 337))
 
     def test57(self):
-        """Array 4"""
         input = """
         main: function void(arr: array[2] of float) {
             a: array[1] of integer = {1};
@@ -562,7 +529,6 @@ class ASTGenSuite(unittest.TestCase):
         self.assertTrue(TestAST.test(input, expect, 338))
 
     def test58(self):
-        """Array 5"""
         input = """
         main: function void() {
             a: array[1] of integer = {"ff" :: "dd"};
@@ -573,7 +539,6 @@ class ASTGenSuite(unittest.TestCase):
         self.assertTrue(TestAST.test(input, expect, 339))
     
     def test59(self):
-        """Array 6"""
         input = """
         main: function void() {
             a: array[2,2,2,2,2,2,2,2] of auto = {{{{{23}}}}};
@@ -584,7 +549,6 @@ class ASTGenSuite(unittest.TestCase):
         self.assertTrue(TestAST.test(input, expect, 340))
 
     def test60(self):
-        """Assignment statement 1"""
         input = """
         main: function void() {
             a, b, c: array[3] of integer = {1,2,3},{1,2,3},{1,2,3};
@@ -595,7 +559,6 @@ class ASTGenSuite(unittest.TestCase):
         self.assertTrue(TestAST.test(input, expect, 341))
 
     def test61(self):
-        """Assignment statement 3"""
         input = """
         main: function void() {
             a: float = 33.223;
@@ -608,7 +571,6 @@ class ASTGenSuite(unittest.TestCase):
         self.assertTrue(TestAST.test(input, expect, 342))
 
     def test62(self):
-        """Assignment statement 5"""
         input = """
         main: function void() {
             a = foo(24, bar);
@@ -619,7 +581,6 @@ class ASTGenSuite(unittest.TestCase):
         self.assertTrue(TestAST.test(input, expect, 343))
 
     def test63(self):
-        """Assignment statement 6"""
         input = """
         main: function void() {
             a[4, 5] = bar(b[4], c[5]);
@@ -630,7 +591,6 @@ class ASTGenSuite(unittest.TestCase):
         self.assertTrue(TestAST.test(input, expect, 344))
 
     def test64(self):
-        """Condition statement 1"""
         input = """
         main: function void() {
             if (true) a = a + 1;
@@ -641,7 +601,6 @@ class ASTGenSuite(unittest.TestCase):
         self.assertTrue(TestAST.test(input, expect, 345))
 
     def test65(self):
-        """Condition statement 2"""
         input = """
         main: function void() {
             if (true) a = a + 1;
@@ -653,7 +612,6 @@ class ASTGenSuite(unittest.TestCase):
         self.assertTrue(TestAST.test(input, expect, 346))
 
     def test66(self):
-        """Condition statement 3"""
         input = """
         main: function void() {
             if (a == 1) {
@@ -669,7 +627,6 @@ class ASTGenSuite(unittest.TestCase):
         self.assertTrue(TestAST.test(input, expect, 347))
 
     def test67(self):
-        """Condition statement 4"""
         input = """
         main: function void() {
             if (a + 4 == 5) {
@@ -688,7 +645,6 @@ class ASTGenSuite(unittest.TestCase):
         self.assertTrue(TestAST.test(input, expect, 348))
 
     def test68(self):
-        """Condition statement 5"""
         input = """
         main: function void() {
             if (a > 4) {
@@ -705,7 +661,6 @@ class ASTGenSuite(unittest.TestCase):
         self.assertTrue(TestAST.test(input, expect, 349))
 
     def test69(self):
-        """Condition statement 6"""
         input = """
         main: function void() {
             if (a == 1) {
@@ -722,248 +677,8 @@ class ASTGenSuite(unittest.TestCase):
         self.assertTrue(TestAST.test(input, expect, 350))
 
     def test70(self):
-        """More complex program"""
         input = """main1 : function string () {}"""
         expect = """Program([
 	FuncDecl(main1, StringType, [], None, BlockStmt([]))
 ])"""
-        self.assertTrue(TestAST.test(input, expect, 370))
-        
-    def test71(self):
-        """More complex program"""
-        input = """main1 : function string () {}"""
-        expect = """Program([
-	FuncDecl(main1, StringType, [], None, BlockStmt([]))
-])"""
-        self.assertTrue(TestAST.test(input, expect, 371))
-        
-    def test72(self):
-        """More complex program"""
-        input = """main1 : function string () {}"""
-        expect = """Program([
-	FuncDecl(main1, StringType, [], None, BlockStmt([]))
-])"""
-        self.assertTrue(TestAST.test(input, expect, 372))
-
-    def test73(self):
-        """More complex program"""
-        input = """main1 : function string () {}"""
-        expect = """Program([
-	FuncDecl(main1, StringType, [], None, BlockStmt([]))
-])"""
-        self.assertTrue(TestAST.test(input, expect, 373))
-        
-    def test74(self):
-        """More complex program"""
-        input = """main1 : function string () {}"""
-        expect = """Program([
-	FuncDecl(main1, StringType, [], None, BlockStmt([]))
-])"""
-        self.assertTrue(TestAST.test(input, expect, 374))
-        
-    def test75(self):
-        """More complex program"""
-        input = """main1 : function string () {}"""
-        expect = """Program([
-	FuncDecl(main1, StringType, [], None, BlockStmt([]))
-])"""
-        self.assertTrue(TestAST.test(input, expect, 375))
-        
-    def test76(self):
-        """More complex program"""
-        input = """main1 : function string () {}"""
-        expect = """Program([
-	FuncDecl(main1, StringType, [], None, BlockStmt([]))
-])"""
-        self.assertTrue(TestAST.test(input, expect, 376))
-        
-    def test77(self):
-        """More complex program"""
-        input = """main1 : function string () {}"""
-        expect = """Program([
-	FuncDecl(main1, StringType, [], None, BlockStmt([]))
-])"""
-        self.assertTrue(TestAST.test(input, expect, 377))
-        
-    def test78(self):
-        """More complex program"""
-        input = """main1 : function string () {}"""
-        expect = """Program([
-	FuncDecl(main1, StringType, [], None, BlockStmt([]))
-])"""
-        self.assertTrue(TestAST.test(input, expect, 378))
-        
-    def test79(self):
-        """More complex program"""
-        input = """main1 : function string () {}"""
-        expect = """Program([
-	FuncDecl(main1, StringType, [], None, BlockStmt([]))
-])"""
-        self.assertTrue(TestAST.test(input, expect, 379))
-        
-    def test80(self):
-        """More complex program"""
-        input = """main1 : function string () {}"""
-        expect = """Program([
-	FuncDecl(main1, StringType, [], None, BlockStmt([]))
-])"""
-        self.assertTrue(TestAST.test(input, expect, 380))
-        
-    def test81(self):
-        """More complex program"""
-        input = """main1 : function string () {}"""
-        expect = """Program([
-	FuncDecl(main1, StringType, [], None, BlockStmt([]))
-])"""
-        self.assertTrue(TestAST.test(input, expect, 381))
-        
-    def test82(self):
-        """More complex program"""
-        input = """main1 : function string () {}"""
-        expect = """Program([
-	FuncDecl(main1, StringType, [], None, BlockStmt([]))
-])"""
-        self.assertTrue(TestAST.test(input, expect, 382))
-
-    def test83(self):
-        """More complex program"""
-        input = """main1 : function string () {}"""
-        expect = """Program([
-	FuncDecl(main1, StringType, [], None, BlockStmt([]))
-])"""
-        self.assertTrue(TestAST.test(input, expect, 383))
-        
-    def test84(self):
-        """More complex program"""
-        input = """main1 : function string () {}"""
-        expect = """Program([
-	FuncDecl(main1, StringType, [], None, BlockStmt([]))
-])"""
-        self.assertTrue(TestAST.test(input, expect, 384))
-        
-    def test85(self):
-        """More complex program"""
-        input = """main1 : function string () {}"""
-        expect = """Program([
-	FuncDecl(main1, StringType, [], None, BlockStmt([]))
-])"""
-        self.assertTrue(TestAST.test(input, expect, 385))
-        
-    def test86(self):
-        """More complex program"""
-        input = """main1 : function string () {}"""
-        expect = """Program([
-	FuncDecl(main1, StringType, [], None, BlockStmt([]))
-])"""
-        self.assertTrue(TestAST.test(input, expect, 386))
-        
-    def test87(self):
-        """More complex program"""
-        input = """main1 : function string () {}"""
-        expect = """Program([
-	FuncDecl(main1, StringType, [], None, BlockStmt([]))
-])"""
-        self.assertTrue(TestAST.test(input, expect, 387))
-        
-    def test88(self):
-        """More complex program"""
-        input = """main1 : function string () {}"""
-        expect = """Program([
-	FuncDecl(main1, StringType, [], None, BlockStmt([]))
-])"""
-        self.assertTrue(TestAST.test(input, expect, 388))
-        
-    def test89(self):
-        """More complex program"""
-        input = """main1 : function string () {}"""
-        expect = """Program([
-	FuncDecl(main1, StringType, [], None, BlockStmt([]))
-])"""
-        self.assertTrue(TestAST.test(input, expect, 389))
-        
-    def test90(self):
-        """More complex program"""
-        input = """main1 : function string () {}"""
-        expect = """Program([
-	FuncDecl(main1, StringType, [], None, BlockStmt([]))
-])"""
-        self.assertTrue(TestAST.test(input, expect, 390))
-        
-    def test91(self):
-        """More complex program"""
-        input = """main1 : function string () {}"""
-        expect = """Program([
-	FuncDecl(main1, StringType, [], None, BlockStmt([]))
-])"""
-        self.assertTrue(TestAST.test(input, expect, 391))
-        
-    def test92(self):
-        """More complex program"""
-        input = """main1 : function string () {}"""
-        expect = """Program([
-	FuncDecl(main1, StringType, [], None, BlockStmt([]))
-])"""
-        self.assertTrue(TestAST.test(input, expect, 392))
-
-    def test93(self):
-        """More complex program"""
-        input = """main1 : function string () {}"""
-        expect = """Program([
-	FuncDecl(main1, StringType, [], None, BlockStmt([]))
-])"""
-        self.assertTrue(TestAST.test(input, expect, 393))
-        
-    def test94(self):
-        """More complex program"""
-        input = """main1 : function string () {}"""
-        expect = """Program([
-	FuncDecl(main1, StringType, [], None, BlockStmt([]))
-])"""
-        self.assertTrue(TestAST.test(input, expect, 394))
-        
-    def test95(self):
-        """More complex program"""
-        input = """main1 : function string () {}"""
-        expect = """Program([
-	FuncDecl(main1, StringType, [], None, BlockStmt([]))
-])"""
-        self.assertTrue(TestAST.test(input, expect, 395))
-        
-    def test96(self):
-        """More complex program"""
-        input = """main1 : function string () {}"""
-        expect = """Program([
-	FuncDecl(main1, StringType, [], None, BlockStmt([]))
-])"""
-        self.assertTrue(TestAST.test(input, expect, 396))
-        
-    def test97(self):
-        """More complex program"""
-        input = """main1 : function string () {}"""
-        expect = """Program([
-	FuncDecl(main1, StringType, [], None, BlockStmt([]))
-])"""
-        self.assertTrue(TestAST.test(input, expect, 397))
-        
-    def test98(self):
-        """More complex program"""
-        input = """main1 : function string () {}"""
-        expect = """Program([
-	FuncDecl(main1, StringType, [], None, BlockStmt([]))
-])"""
-        self.assertTrue(TestAST.test(input, expect, 398))
-        
-    def test99(self):
-        """More complex program"""
-        input = """main1 : function string () {}"""
-        expect = """Program([
-	FuncDecl(main1, StringType, [], None, BlockStmt([]))
-])"""
-        self.assertTrue(TestAST.test(input, expect, 399))
-        
-    def test100(self):
-        """More complex program"""
-        input = """main1 : function string () {}"""
-        expect = """Program([
-	FuncDecl(main1, StringType, [], None, BlockStmt([]))
-])"""
+        self.assertTrue(TestAST.test(input, expect, 370)) 
