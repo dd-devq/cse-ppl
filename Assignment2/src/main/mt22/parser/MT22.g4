@@ -71,13 +71,13 @@ primitivetype:
 
 exprlst: expr (COMMA expr)*;
 
-expr: expr1 (strconcate expr1)*;
-expr1: expr2 (relational expr2)?;
-expr2: expr3 (binarylogical expr3)*;
-expr3: expr4 (adding expr4)*;
-expr4: expr5 (multiplying expr5)*;
-expr5: unarylogical? expr6;
-expr6: sign? expr7;
+expr: expr1 strconcate expr1| expr1;
+expr1: expr2 relational expr2| expr2;
+expr2: expr2 binarylogical expr3 | expr3;
+expr3: expr3 adding expr4 | expr4;
+expr4: expr4 multiplying expr5 | expr5;
+expr5: unarylogical expr5 | expr6;
+expr6: sign expr6 | expr7;
 expr7: expr7 LSB exprlst RSB | expr8;
 expr8: operands | LB expr RB;
 
@@ -89,7 +89,7 @@ unarylogical: NOT;
 binarylogical: AND | OR;
 sign: SUB;
 operands: INTL | FLOATL | STRINGL | BOOLL | ID | arrayL | funccall;
-funccall: ID LB exprlst* RB;
+funccall: ID LB exprlst? RB;
 arrayType: ARRAY LSB dimension RSB OF primitivetype;
 dimension: INTL (COMMA INTL)*;
 

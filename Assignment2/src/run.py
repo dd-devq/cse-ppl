@@ -6,7 +6,7 @@ from antlr4 import *
 
 for path in ['./test/', './main/mt22/parser/', './main/mt22/utils/', './main/mt22/astgen/', './main/mt22/checker/', './main/mt22/codegen/']:
     sys.path.append(path)
-ANTLR_JAR = '/home/flow/Dev/cse-ppl/Enviroment/antlr-4.9.2-complete.jar'
+ANTLR_JAR = '/home/qilin/Dev/cse-ppl/Enviroment/antlr-4.9.2-complete.jar'
 TARGET_DIR = '../target'
 GENERATE_DIR = 'main/mt22/parser'
 
