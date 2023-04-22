@@ -78,7 +78,7 @@ expr3: expr3 adding expr4 | expr4;
 expr4: expr4 multiplying expr5 | expr5;
 expr5: unarylogical expr5 | expr6;
 expr6: sign expr6 | expr7;
-expr7: expr7 LSB exprlst RSB | expr8;
+expr7: ID LSB exprlst RSB | expr8;
 expr8: operands | LB expr RB;
 
 adding: SUB | ADD;
