@@ -20,7 +20,18 @@ class Symbol:
 class GetEnv(Visitor, Utils):
 
     def __init__(self):
-        self.global_env = {}
+        self.global_env = {
+            'readInteger': ('function', FType([], IntegerType())),
+            'printInteger': ('function', FType(IntegerType(), VoidType())),
+            'readFloat': ('function', FType([], FloatType())),
+            'writeFloat': ('function', FType(FloatType(), VoidType())),
+            'readBoolean': ('function', FType([], BooleanType())),
+            'printBoolean': ('function', FType(BooleanType(), VoidType())),
+            'readString': ('function', FType([], StringType())),
+            'printString': ('function', FType(StringType(), VoidType())),
+            'super': ('function', FType(List[Type], Type())),
+            'preventDefault': ('function', FType([], VoidType())),
+        }
 
     def visitProgram(self, ctx: Program, o: object):
         o = self.global_env
@@ -71,7 +82,7 @@ class GetEnv(Visitor, Utils):
 
 
 class StaticChecker(Visitor, Utils):
-    global_env = {'global': {
+    global_env = {
         'readInteger': ('function', FType([], IntegerType())),
         'printInteger': ('function', FType(IntegerType(), VoidType())),
         'readFloat': ('function', FType([], FloatType())),
@@ -83,7 +94,6 @@ class StaticChecker(Visitor, Utils):
         'super': ('function', FType(List[Type], Type())),
         'preventDefault': ('function', FType([], VoidType())),
     }
-    }
 
     def __init__(self, ctx):
         self.ctx = ctx
@@ -93,7 +103,7 @@ class StaticChecker(Visitor, Utils):
 
     # Program
     def visitProgram(self, ctx: Program, o: object):
-        o = GetEnv().visit(ctx, None)
+        o = GetEnv().visit(ctx, o)
         env = {}
         env['global'] = o
         program = [self.visit(decl, env) for decl in ctx.decls]
@@ -101,7 +111,6 @@ class StaticChecker(Visitor, Utils):
             raise NoEntryPoint()
         if isinstance(type(o["main"][1]), VoidType) or o["main"][0] != 'function':
             raise NoEntryPoint()
-        print(o)
         return program
 
     # Declare
@@ -285,7 +294,6 @@ class StaticChecker(Visitor, Utils):
                 raise TypeMismatchInExpression(ctx)
             if isinstance(lType[1], FloatType) or isinstance(rType[1], FloatType):
                 return (None, FloatType(), None)
-            print('Hello')
             return (None, IntegerType(), None)
         if op == '%':
             if not (isinstance(lType[1], IntegerType) or isinstance(rType[1], IntegerType)):

@@ -169,7 +169,11 @@ class CheckerSuite(unittest.TestCase):
         }
         foo: function auto(a:integer, b : float) {
             return a;
-        }"""
+        }
+        readInteger: function integer() {
+            
+        }
+        """
 
         expect = """[None, None]"""
         self.assertTrue(TestChecker.test(input, expect, 413))
