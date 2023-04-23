@@ -229,7 +229,7 @@ class ASTGeneration(MT22Visitor):
 
     def visitWhilestmt(self, ctx: MT22Parser.WhilestmtContext):
         if ctx.getChildCount() == 5:
-            return WhileStmt(self.visit(ctx.expr()), self.visit(ctx.stmt(0)))
+            return WhileStmt(self.visit(ctx.expr()), self.visit(ctx.stmt()))
         else:
             return
 

@@ -90,19 +90,86 @@ class CheckerSuite(unittest.TestCase):
     #     expect = """[None, None, None]"""
     #     self.assertTrue(TestChecker.test(input, expect, 407))
 
-    def test_full_program_6(self):
+    # def test_full_program_6(self):
+    #     input = """
+    #     x: float = 1;
+    #     main: function void() {
+    #         x:boolean = false;
+    #         {
+    #             a: boolean = x;
+    #         }
+    #         x = -true;
+    #     }
+    #     foo: function integer(a:integer, b : float) {
+    #         return a;
+    #     }"""
+
+    #     expect = """Type mismatch in expression: UnExpr(-, BooleanLit(True))"""
+    #     self.assertTrue(TestChecker.test(input, expect, 408))
+
+    # def test_full_program_7(self):
+    #     input = """
+    #     main: function void() {
+    #         i: float;
+    #         for (i = 1, i < 10, i + 1) {
+    #             foo(i, 1.0);
+    #         }
+    #     }
+    #     foo: function integer(a:integer, b : float) {
+    #         return a;
+    #     }"""
+
+    #     expect = """Type mismatch in statement: ForStmt(AssignStmt(Id(i), IntegerLit(1)), BinExpr(<, Id(i), IntegerLit(10)), BinExpr(+, Id(i), IntegerLit(1)), BlockStmt([CallStmt(foo, Id(i), FloatLit(1.0))]))"""
+    #     self.assertTrue(TestChecker.test(input, expect, 409))
+
+    # def test_full_program_8(self):
+    #     input = """
+    #     main: function void() {
+    #         a: array [2,2,2] of integer = { {{1,2}, {1,2}}, {{1,2}, {1,2}}};
+    #         a[1,1,1] = 2.0;
+    #     }
+    #     foo: function integer(a:integer, b : float) {
+    #         return a;
+    #     }"""
+
+    #     expect = """Type mismatch in statement: AssignStmt(ArrayCell(a, [IntegerLit(1), IntegerLit(1), IntegerLit(1)]), FloatLit(2.0))"""
+    #     self.assertTrue(TestChecker.test(input, expect, 410))
+
+    # def test_full_program_9(self):
+    #     input = """
+    #     main: function void() {
+    #         a: auto = foo(1, 2.0);
+    #         a = 2.0;
+    #     }
+    #     foo: function integer(a:integer, b : float) {
+    #         return a;
+    #     }"""
+
+    #     expect = """Type mismatch in statement: AssignStmt(Id(a), FloatLit(2.0))"""
+    #     self.assertTrue(TestChecker.test(input, expect, 411))
+
+    # def test_full_program_10(self):
+    #     input = """
+    #     main: function void() {
+    #         a: array [2,2,2] of integer = { {{1,2}, {1,2}}, {{1,2}, {1,2}}};
+    #         a[1.0,1,1] = 2.0;
+    #     }
+    #     foo: function integer(a:integer, b : float) {
+    #         return a;
+    #     }"""
+
+    #     expect = """Type mismatch in expression: ArrayCell(a, [FloatLit(1.0), IntegerLit(1), IntegerLit(1)])"""
+    #     self.assertTrue(TestChecker.test(input, expect, 412))
+
+    def test_full_program_11(self):
         input = """
-        x: float = 1;
         main: function void() {
-            x:boolean = false;
-            {
-                a: boolean = x;
-            }
-            x = -true;
+            i: integer; 
+            i = foo(1,2.0) + 1;
         }
-        foo: function integer(a:integer, b : float) {
+        foo: function auto(a:integer, b : float) {
             return a;
         }"""
 
-        expect = """Type mismatch in expression: UnExpr(-, BooleanLit(True))"""
-        self.assertTrue(TestChecker.test(input, expect, 408))
+        expect = """[None, None]"""
+        self.assertTrue(TestChecker.test(input, expect, 413))

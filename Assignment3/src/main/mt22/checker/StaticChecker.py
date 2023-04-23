@@ -71,18 +71,19 @@ class GetEnv(Visitor, Utils):
 
 
 class StaticChecker(Visitor, Utils):
-    global_env = [
-        Symbol("readInteger", FType([], IntegerType())),
-        Symbol("printInteger", FType(IntegerType(), VoidType())),
-        Symbol("readFloat", FType([], FloatType())),
-        Symbol("writeFloat", FType(FloatType(), VoidType())),
-        Symbol("readBoolean", FType([], BooleanType())),
-        Symbol("printBoolean", FType(BooleanType(), VoidType())),
-        Symbol("readString", FType([], StringType())),
-        Symbol("printString", FType(StringType(), VoidType())),
-        Symbol("super", FType(List[Type], Type())),
-        Symbol("preventDefault", FType([], VoidType())),
-    ]
+    global_env = {'global': {
+        'readInteger': ('function', FType([], IntegerType())),
+        'printInteger': ('function', FType(IntegerType(), VoidType())),
+        'readFloat': ('function', FType([], FloatType())),
+        'writeFloat': ('function', FType(FloatType(), VoidType())),
+        'readBoolean': ('function', FType([], BooleanType())),
+        'printBoolean': ('function', FType(BooleanType(), VoidType())),
+        'readString': ('function', FType([], StringType())),
+        'printString': ('function', FType(StringType(), VoidType())),
+        'super': ('function', FType(List[Type], Type())),
+        'preventDefault': ('function', FType([], VoidType())),
+    }
+    }
 
     def __init__(self, ctx):
         self.ctx = ctx
@@ -100,7 +101,7 @@ class StaticChecker(Visitor, Utils):
             raise NoEntryPoint()
         if isinstance(type(o["main"][1]), VoidType) or o["main"][0] != 'function':
             raise NoEntryPoint()
-
+        print(o)
         return program
 
     # Declare
@@ -110,13 +111,17 @@ class StaticChecker(Visitor, Utils):
         if ctx.init is not None:
             init = self.visit(ctx.init, env)
             initType = init[1]
-            if not (isinstance(varType, type(initType)) or (isinstance(varType, FloatType) and isinstance(initType, IntegerType))):
-                raise TypeMismatchInVarDecl(ctx)
+            if (((isinstance(varType, ArrayType) and isinstance(initType, ArrayType)) or (isinstance(varType, FloatType) and isinstance(initType, IntegerType)))):
+                varDimentsions = list(map(int, varType.dimensions))
+                if varDimentsions != initType.dimensions:
+                    raise TypeMismatchInVarDecl(ctx)
             if isinstance(varType, VoidType):
                 raise TypeMismatchInVarDecl(ctx)
+            if isinstance(varType, AutoType):
+                varType = initType
         elif isinstance(varType, AutoType):
             raise Invalid(Variable(), ctx.name)
-        print(o)
+
         if env.get('local') is not None:
             if ctx.name in env['local'][0]:
                 raise Redeclared(Variable(), ctx.name)
@@ -141,21 +146,37 @@ class StaticChecker(Visitor, Utils):
                 return self.visit(stmt, (ftype, env))
 
     def visitParamDecl(self, ctx: ParamDecl, o: object):
+        # check param type
         return ('param', self.visit(ctx.typ, o), ctx.name, ctx.out, ctx.inherit)
 
     # Statement
-    def visitAssignStmt(self, ctx, o: object):
+    def visitAssignStmt(self, ctx: AssignStmt, o: object):
         inLoop, env = o
         lhs = self.visit(ctx.lhs, env)
         exp = self.visit(ctx.rhs, env)
         lhsType = lhs[1]
         expType = exp[1]
-
         if isinstance(lhsType, VoidType):
             raise TypeMismatchInStatement(ctx)
-        if not (isinstance(lhsType, type(expType)) or (isinstance(lhsType, FloatType)
-                                                       and isinstance(expType, IntegerType))):
-            raise TypeMismatchInStatement(ctx)
+
+        if isinstance(expType, AutoType):
+            param = env['global'][ctx.rhs.name][2]
+            inherit = env['global'][ctx.rhs.name][3]
+            body = env['global'][ctx.rhs.name][4]
+            env['global'][ctx.rhs.name] = (
+                'function', lhsType, param, inherit, body)
+            expType = lhsType
+
+        if ((isinstance(lhsType, ArrayType) and isinstance(expType, ArrayType)) and (isinstance(lhsType, FloatType) and isinstance(expType, IntegerType))):
+            varDimentsions = list(map(int, lhsType.dimensions))
+            if varDimentsions != expType.dimensions:
+                raise TypeMismatchInVarDecl(ctx)
+        if isinstance(lhsType, ArrayType):
+            if not ((isinstance(lhsType.typ, type(expType)) or (isinstance(lhsType.typ, FloatType) and isinstance(expType, IntegerType)))):
+                raise TypeMismatchInStatement(ctx)
+        if not isinstance(lhsType, ArrayType):
+            if not (isinstance(lhsType, type(expType)) or (isinstance(lhsType, FloatType) and isinstance(expType, IntegerType))):
+                raise TypeMismatchInStatement(ctx)
 
     def visitBlockStmt(self, ctx, o: object):
         inLoop, temp = o
@@ -186,14 +207,29 @@ class StaticChecker(Visitor, Utils):
         condType = self.visit(ctx.cond, env)
         updType = self.visit(ctx.upd, env)
 
+        if not (isinstance(idType[1], type(initType[1]))):
+            raise TypeMismatchInStatement(ctx)
+        if not (isinstance(initType[1], IntegerType)):
+            raise TypeMismatchInStatement(ctx)
+        if not (isinstance(updType[1], IntegerType)):
+            raise TypeMismatchInStatement(ctx)
+        if not (isinstance(condType[1], BooleanType)):
+            raise TypeMismatchInStatement(ctx)
+
         self.visit(ctx.stmt, (True, env))
 
-    def visitWhileStmt(self, ctx: WhileStmt, o: object): pass
+    def visitWhileStmt(self, ctx: WhileStmt, o: object):
+        inLoop, env = o
+
+        condType = self.visit(ctx.cond, env)
+        if False in [type(cond) is BooleanType for cond in [condType[1]]]:
+            raise TypeMismatchInStatement(ctx)
+
+        self.visit(ctx.stmt, (True, env))
 
     def visitDoWhileStmt(self, ctx, o: object):
         inLoop, env = o
         condType = self.visit(ctx.cond, env)
-        print(ctx.cond)
         if False in [type(cond) is BooleanType for cond in [condType[1]]]:
             raise TypeMismatchInStatement(ctx)
 
@@ -216,8 +252,9 @@ class StaticChecker(Visitor, Utils):
                 raise TypeMismatchInStatement(ctx)
         else:
             rtype = self.visit(ctx.expr, env)
-            if not isinstance(ftype, type(rtype[1])) and \
-                    not (isinstance(ftype, FloatType) and isinstance(rtype[1], IntegerType)):
+            if isinstance(ftype, AutoType):
+                return
+            if not isinstance(ftype, type(rtype[1])) and not (isinstance(ftype, FloatType) and isinstance(rtype[1], IntegerType)):
                 raise TypeMismatchInStatement(ctx)
 
     def visitCallStmt(self, ctx: CallStmt, o: object):
@@ -236,11 +273,10 @@ class StaticChecker(Visitor, Utils):
 
     # Expression
 
-    def visitBinExpr(self, ctx, o: object):
+    def visitBinExpr(self, ctx: BinExpr, o: object):
         lType = self.visit(ctx.left, o)
         rType = self.visit(ctx.right, o)
         op = ctx.op
-
         if isinstance(lType[1], VoidType) or isinstance(rType[1], VoidType):
             raise TypeMismatchInExpression(ctx)
         if op in ['+', '-', '*', '/']:
@@ -249,6 +285,7 @@ class StaticChecker(Visitor, Utils):
                 raise TypeMismatchInExpression(ctx)
             if isinstance(lType[1], FloatType) or isinstance(rType[1], FloatType):
                 return (None, FloatType(), None)
+            print('Hello')
             return (None, IntegerType(), None)
         if op == '%':
             if not (isinstance(lType[1], IntegerType) or isinstance(rType[1], IntegerType)):
@@ -275,11 +312,10 @@ class StaticChecker(Visitor, Utils):
                     return (None, StringType(), None)
             raise TypeMismatchInExpression(ctx)
 
-    def visitUnExpr(self, ctx, o: object):
+    def visitUnExpr(self, ctx: UnExpr, o: object):
         expType = self.visit(ctx.val, o)
         op = str(ctx.op)
-        if (op == '-' and not (isinstance(expType[1], FloatType) or isinstance(expType[1], IntegerType))) or \
-                (op == '!' and not isinstance(expType[1], BooleanType)):
+        if (op == '-' and not (isinstance(expType[1], FloatType) or isinstance(expType[1], IntegerType))) or (op == '!' and not isinstance(expType[1], BooleanType)):
             raise TypeMismatchInExpression(ctx)
         return (None, expType[1], None)
 
@@ -297,7 +333,16 @@ class StaticChecker(Visitor, Utils):
         else:
             raise Undeclared(Identifier(), ctx.name)
 
-    def visitArrayCell(self, ctx, o: object): pass
+    def visitArrayCell(self, ctx: ArrayCell, o: object):
+        arrType = self.visit(Id(ctx.name), o)
+
+        indicesType = list(map(lambda x: self.visit(x, o), ctx.cell))
+        if type(arrType[1]) is not ArrayType:
+            raise TypeMismatchInExpression(ctx)
+        for indiceType in indicesType:
+            if type(indiceType[1]) is not IntegerType:
+                raise TypeMismatchInExpression(ctx)
+        return (None, arrType[1], None)
 
     def visitIntegerLit(self, ctx: IntegerLit, o: object):
         return (None, IntegerType(), None)
@@ -312,7 +357,20 @@ class StaticChecker(Visitor, Utils):
         return (None, BooleanType(), None)
 
     def visitArrayLit(self, ctx: ArrayLit, o: object):
-        pass
+        def dim(arrayLit):
+            if not (isinstance(arrayLit, List)):
+                if isinstance(arrayLit, ArrayLit):
+                    return dim(arrayLit.explist)
+                else:
+                    return []
+            return [len(arrayLit)] + dim(arrayLit[0])
+        dimen = dim(ctx.explist)
+        elements = list(map(lambda exp: self.visit(exp, o), ctx.explist))
+        arrayType = elements[0][1]
+        for element in elements:
+            if not isinstance(element[1], type(arrayType)):
+                raise IllegalArrayLiteral(ctx)
+        return (None,  ArrayType(dimen, arrayType), None)
 
     def visitFuncCall(self, ctx: FuncCall, o: object):
         if ctx.name in o['global']:
