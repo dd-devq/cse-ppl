@@ -120,7 +120,7 @@ class StaticChecker(Visitor, Utils):
         if ctx.init is not None:
             init = self.visit(ctx.init, env)
             initType = init[1]
-            if (((isinstance(varType, ArrayType) and isinstance(initType, ArrayType)) or (isinstance(varType, FloatType) and isinstance(initType, IntegerType)))):
+            if isinstance(varType, ArrayType) and isinstance(initType, ArrayType):
                 varDimentsions = list(map(int, varType.dimensions))
                 if varDimentsions != initType.dimensions:
                     raise TypeMismatchInVarDecl(ctx)
@@ -128,6 +128,8 @@ class StaticChecker(Visitor, Utils):
                 raise TypeMismatchInVarDecl(ctx)
             if isinstance(varType, AutoType):
                 varType = initType
+            if not (isinstance(initType, type(varType)) or (isinstance(varType, FloatType) and isinstance(initType, IntegerType))):
+                raise TypeMismatchInVarDecl(ctx)
         elif isinstance(varType, AutoType):
             raise Invalid(Variable(), ctx.name)
 
