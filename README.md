@@ -11,3 +11,7 @@ If ANTLR_JAR path is correct, please check if folder 'testcases' and 'solutions'
 If not please create both folder inside 'solutions' and 'testcases' inside folder 'test'.
 
 Program has to write and read file from these folder for testing.
+
+### STATUS
+This project is on hold.
+No Code Generation Module
